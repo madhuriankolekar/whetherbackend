@@ -1,0 +1,5 @@
+spring.application.name=dem
+spring.activemq.broker-url=http://127.0.0.1:8161/index.html
+spring.activemq.user=admin
+spring.activemq.password=admin
+spring.jms.pub-sub-domain=true

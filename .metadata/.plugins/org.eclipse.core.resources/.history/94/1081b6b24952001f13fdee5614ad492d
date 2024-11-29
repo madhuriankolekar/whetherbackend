@@ -1,0 +1,29 @@
+package com.example.demo.controller;
+
+
+import com.example.demo.producer.JmsProducer;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestController {
+
+    private final JmsProducer jmsProducer;
+
+    public TestController(JmsProducer jmsProducer) {
+        this.jmsProducer = jmsProducer;
+    }
+
+    @GetMapping("/send/queue")
+    public String sendToQueue(@RequestParam String message) {
+        jmsProducer.sendToQueue(message);
+        return "Message sent to queue";
+    }
+
+    @GetMapping("/send/topic")
+    public String sendToTopic(@RequestParam String message) {
+        jmsProducer.sendToTopic(message);
+        return "Message sent to topic";
+    }
+}

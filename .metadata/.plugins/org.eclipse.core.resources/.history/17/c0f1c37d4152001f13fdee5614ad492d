@@ -1,0 +1,29 @@
+package com.example.demo.producer;
+
+
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.jms.Destination;
+
+@Component
+public class JmsProducer {
+
+    private final JmsTemplate jmsTemplate;
+    private final Destination queue;
+    private final Destination topic;
+
+    public JmsProducer(JmsTemplate jmsTemplate, Destination queue, Destination topic) {
+        this.jmsTemplate = jmsTemplate;
+        this.queue = queue;
+        this.topic = topic;
+    }
+
+    public void sendToQueue(String message) {
+        jmsTemplate.convertAndSend(queue, message);
+    }
+
+    public void sendToTopic(String message) {
+        jmsTemplate.convertAndSend(topic, message);
+    }
+}

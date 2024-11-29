@@ -1,0 +1,28 @@
+package com.example.demo.controller;
+
+@RestController
+@RequestMapping("/api/weather")
+public class CityWeatherController {
+    @Autowired
+    private CityWeatherService service;
+
+    @GetMapping
+    public List<CityWeather> getAllCities() {
+        return service.getAllCities();
+    }
+
+    @PostMapping
+    public CityWeather addCityWeather(@RequestBody CityWeather cityWeather) {
+        return service.addCityWeather(cityWeather);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteCity(@PathVariable Long id) {
+        service.deleteCityWeather(id);
+    }
+
+    @GetMapping("/search")
+    public List<CityWeather> searchCity(@RequestParam String cityName) {
+        return service.searchCity(cityName);
+    }
+}

@@ -1,0 +1,7 @@
+spring.application.name=demo-1
+java.naming.factory.initial=com.example.MyInitialContextFactory
+java.naming.provider.url=http://example.com/jndi
+spring.datasource.jndi-name=java:comp/env/jdbc/myDataSource
+java -Djava.naming.factory.initial=com.example.MyInitialContextFactory \
+     -Djava.naming.provider.url=http://example.com/jndi \
+     -jar my-spring-boot-app.jar

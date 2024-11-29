@@ -1,0 +1,57 @@
+package com.example.demo.config;
+
+import java.util.Queue;
+
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Retry.Topic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import ch.qos.logback.classic.pattern.MessageConverter;
+
+//import javax.jms.ConnectionFactory;
+//import javax.jms.Queue;
+//import javax.jms.Topic;
+//import org.apache.activemq.command.ActiveMQQueue;
+//import org.apache.activemq.command.ActiveMQTopic;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+//import org.springframework.jms.core.JmsTemplate;
+//import org.springframework.jms.support.converter.MessageConverter;
+//import org.springframework.jms.support.converter.SimpleMessageConverter;
+
+@Configuration
+public class JmsConfig {
+
+    @Bean
+    public Queue queue() {
+        return new ActiveMQQueue("myQueue");
+    }
+
+    @Bean
+    public Topic topic() {
+        return new ActiveMQTopic("myTopic");
+    }
+
+    @Bean
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(ConnectionFactory connectionFactory) {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setConcurrency("1-1");
+        factory.setPubSubDomain(false); // Set true if using topics
+        return factory;
+    }
+
+    @Bean
+    public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
+        JmsTemplate template = new JmsTemplate();
+        template.setConnectionFactory(connectionFactory);
+        template.setDefaultDestination(queue());
+        return template;
+    }
+
+    @Bean
+    public MessageConverter messageConverter() {
+        return new SimpleMessageConverter();
+    }
+}

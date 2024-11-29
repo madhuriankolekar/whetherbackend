@@ -1,0 +1,125 @@
+package com.example.demo;
+
+
+import javax.jms.*;
+
+public class Producer {
+
+    public static void main(String[] args) {
+        // Simulating a JMS provider setup
+        ConnectionFactory connectionFactory = new MockConnectionFactory();
+        Connection connection = null;
+        Session session = null;
+        MessageProducer producer = null;
+        
+        try {
+            // Create a connection
+            connection = connectionFactory.createConnection();
+            connection.start();
+            
+            // Create a session
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            
+            // Create a queue
+            Queue queue = session.createQueue("testQueue");
+            
+            // Create a producer
+            producer = session.createProducer(queue);
+            
+            // Create a message
+            TextMessage message = session.createTextMessage("Hello JMS!");
+            
+            // Send the message
+            producer.send(message);
+            
+            System.out.println("Message sent: " + message.getText());
+            
+        } catch (JMSException e) {
+            e.printStackTrace();
+        } finally {
+            // Cleanup resources
+            try {
+                if (producer != null) producer.close();
+                if (session != null) session.close();
+                if (connection != null) connection.close();
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// Mock implementations for demonstration purposes
+class MockConnectionFactory implements ConnectionFactory {
+    @Override
+    public Connection createConnection() throws JMSException {
+        return new MockConnection();
+    }
+
+    // Other methods omitted for brevity
+}
+
+class MockConnection implements Connection {
+    @Override
+    public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
+        return new MockSession();
+    }
+    
+    @Override
+    public void start() throws JMSException {}
+    @Override
+    public void close() throws JMSException {}
+    
+    // Other methods omitted for brevity
+}
+
+class MockSession implements Session {
+    @Override
+    public Queue createQueue(String queueName) throws JMSException {
+        return new MockQueue(queueName);
+    }
+    
+    @Override
+    public MessageProducer createProducer(Destination destination) throws JMSException {
+        return new MockMessageProducer();
+    }
+    
+    @Override
+    public TextMessage createTextMessage(String text) throws JMSException {
+        return new MockTextMessage(text);
+    }
+    
+    @Override
+    public void close() throws JMSException {}
+    
+    // Other methods omitted for brevity
+}
+
+class MockQueue implements Queue {
+    private final String name;
+    public MockQueue(String name) { this.name = name; }
+    @Override
+    public String getQueueName() { return name; }
+}
+
+class MockMessageProducer implements MessageProducer {
+    @Override
+    public void send(Message message) throws JMSException {
+        // Simulate sending a message
+        System.out.println("Message sent to queue: " + message);
+    }
+    
+    @Override
+    public void close() throws JMSException {}
+    
+    // Other methods omitted for brevity
+}
+
+class MockTextMessage implements TextMessage {
+    private final String text;
+    public MockTextMessage(String text) { this.text = text; }
+    @Override
+    public String getText() throws JMSException { return text; }
+    
+    // Other methods omitted for brevity
+}

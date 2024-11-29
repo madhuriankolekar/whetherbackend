@@ -1,0 +1,2 @@
+java.naming.factory.initial=com.example.MyInitialContextFactory
+java.naming.provider.url=http://example.com/jndi

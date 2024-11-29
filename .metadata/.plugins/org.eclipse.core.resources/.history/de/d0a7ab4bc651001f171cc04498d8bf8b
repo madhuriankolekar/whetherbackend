@@ -1,0 +1,28 @@
+package com.example.demo;
+
+
+
+import javax.jms.*;
+
+public class TopicConsumer {
+    public static void main(String[] args) {
+        ConnectionFactory connectionFactory = (ConnectionFactory) JMSUtil.createConnectionFactory();
+        try (Connection connection = connectionFactory.createConnection();
+             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+
+            Topic topic = (Topic) JMSUtil.createTopic(session);
+            MessageConsumer consumer = session.createConsumer(topic);
+
+            connection.start();
+
+            Message message = consumer.receive();
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                System.out.println("Received message from Topic: " + textMessage.getText());
+            }
+
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+}

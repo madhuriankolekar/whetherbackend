@@ -1,0 +1,28 @@
+package com.example.demo;
+
+import javax.jms.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
+public class trya {
+    private static String url = "tcp://localhost:61616";
+    private static String queueName = "myQueue";
+    public static void main(String[] args) throws JMSException {
+        // create connection factory
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+        // create connection
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        // create session
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        // create destination
+        Destination destination = session.createQueue(queueName);
+        // create producer
+        MessageProducer producer = session.createProducer(destination);
+        // create message
+        TextMessage message = session.createTextMessage("Hello, world!");
+        // send message
+        producer.send(message);
+        // clean up resources
+        session.close();
+        connection.close();
+    }
+}

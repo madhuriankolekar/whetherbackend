@@ -1,0 +1,195 @@
+package com.example.demo;
+
+
+import javax.jms.*;
+
+public class JMSExample {
+
+    public static void main(String[] args) {
+        // Simulating a JMS provider setup
+        ConnectionFactory connectionFactory = new MockConnectionFactory();
+        Connection connection = null;
+        Session session = null;
+        MessageConsumer consumer = null;
+        
+        try {
+            // Create a connection
+            connection = connectionFactory.createConnection();
+            connection.start();
+            
+            // Create a session
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            
+            // Create a queue
+            Queue queue = session.createQueue("testQueue");
+            
+            // Create a consumer
+            consumer = session.createConsumer(queue);
+            
+            // Receive a message
+            Message message = consumer.receive(1000); // Timeout of 1 second
+            
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                System.out.println("Message received: " + textMessage.getText());
+            } else {
+                System.out.println("Received non-text message.");
+            }
+            
+        } catch (JMSException e) {
+            e.printStackTrace();
+        } finally {
+            // Cleanup resources
+            try {
+                if (consumer != null) consumer.close();
+                if (session != null) session.close();
+                if (connection != null) connection.close();
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// Reuse the Mock classes from the Producer code
+
+//import javax.jms.*;
+//
+//public class JMSExample {
+//
+//    // Placeholder for a connection factory
+//    private static ConnectionFactory createConnectionFactory() {
+//        // Return a real connection factory instance in practice
+//        return new com.example.InMemoryConnectionFactory();
+//    }
+//
+//    public static void main(String[] args) throws JMSException {
+//        // Create a connection factory
+//        ConnectionFactory connectionFactory = createConnectionFactory();
+//
+//        // Create a connection
+//        try (Connection connection = connectionFactory.createConnection()) {
+//            connection.start();
+//
+//            // Create a session
+//            try (Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+//
+//                // Create a topic and a queue
+//                Topic topic = session.createTopic("SampleTopic");
+//                Queue queue = session.createQueue("SampleQueue");
+//
+//                // Create a producer for the topic
+//                try (MessageProducer topicProducer = session.createProducer(topic)) {
+//                    TextMessage message = session.createTextMessage("Hello, Topic!");
+//                    topicProducer.send(message);
+//                    System.out.println("Sent message to topic: " + message.getText());
+//                }
+//
+//                // Create a producer for the queue
+//                try (MessageProducer queueProducer = session.createProducer(queue)) {
+//                    TextMessage message = session.createTextMessage("Hello, Queue!");
+//                    queueProducer.send(message);
+//                    System.out.println("Sent message to queue: " + message.getText());
+//                }
+//
+//                // Create a consumer for the topic
+//                try (MessageConsumer topicConsumer = session.createConsumer(topic)) {
+//                    Message receivedMessage = topicConsumer.receive(1000);
+//                    if (receivedMessage instanceof TextMessage) {
+//                        TextMessage textMessage = (TextMessage) receivedMessage;
+//                        System.out.println("Received message from topic: " + textMessage.getText());
+//                    }
+//                }
+//
+//                // Create a consumer for the queue
+//                try (MessageConsumer queueConsumer = session.createConsumer(queue)) {
+//                    Message receivedMessage = queueConsumer.receive(1000);
+//                    if (receivedMessage instanceof TextMessage) {
+//                        TextMessage textMessage = (TextMessage) receivedMessage;
+//                        System.out.println("Received message from queue: " + textMessage.getText());
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//
+////	import javax.jms.Connection;
+////	import javax.jms.ConnectionFactory;
+////	import javax.jms.JMSException;
+////	import javax.jms.Session;
+////	import javax.jms.Topic;
+////	import javax.jms.Queue;
+////	import javax.jms.MessageProducer;
+////	import javax.jms.MessageConsumer;
+////	import javax.jms.TextMessage;
+////	import javax.naming.InitialContext;
+////	import javax.naming.NamingException;
+////
+////	public class JMSExample {
+////
+////	    public static void main(String[] args) throws NamingException, JMSException {
+////	        // Initial Context
+////	        InitialContext ctx = new InitialContext();
+////
+////	        // Lookup the ConnectionFactory from the JNDI context
+////	        ConnectionFactory connectionFactory = (ConnectionFactory) ctx.lookup("ConnectionFactory");
+////
+////	        // Create a Connection
+////	        Connection connection = connectionFactory.createConnection();
+////
+////	        // Start the connection
+////	        connection.start();
+////
+////	        // Create a Session
+////	        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+////
+////	        // Create a Queue
+////	        Queue queue = session.createQueue("exampleQueue");
+////
+////	        // Create a Topic
+////	        Topic topic = session.createTopic("exampleTopic");
+////
+////	        // Create a Producer for the Queue
+////	        MessageProducer queueProducer = session.createProducer(queue);
+////
+////	        // Create a Producer for the Topic
+////	        MessageProducer topicProducer = session.createProducer(topic);
+////
+////	        // Create a TextMessage
+////	        TextMessage message = session.createTextMessage("Hello, JMS!");
+////
+////	        // Send the message to the Queue
+////	        queueProducer.send(message);
+////	        System.out.println("Message sent to the Queue: " + message.getText());
+////
+////	        // Send the message to the Topic
+////	        topicProducer.send(message);
+////	        System.out.println("Message sent to the Topic: " + message.getText());
+////
+////	        // Create a Consumer for the Queue
+////	        MessageConsumer queueConsumer = session.createConsumer(queue);
+////
+////	        // Receive the message from the Queue
+////	        TextMessage receivedQueueMessage = (TextMessage) queueConsumer.receive();
+////	        System.out.println("Message received from the Queue: " + receivedQueueMessage.getText());
+////
+////	        // Create a Consumer for the Topic
+////	        MessageConsumer topicConsumer = session.createConsumer(topic);
+////
+////	        // Receive the message from the Topic
+////	        TextMessage receivedTopicMessage = (TextMessage) topicConsumer.receive();
+////	        System.out.println("Message received from the Topic: " + receivedTopicMessage.getText());
+////
+////	        // Clean up
+////	        queueConsumer.close();
+////	        topicConsumer.close();
+////	        queueProducer.close();
+////	        topicProducer.close();
+////	        session.close();
+////	        connection.close();
+////	    }
+////	}
+//
+//

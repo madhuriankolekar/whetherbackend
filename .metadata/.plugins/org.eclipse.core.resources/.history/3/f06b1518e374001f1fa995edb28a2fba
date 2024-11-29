@@ -1,0 +1,27 @@
+package com.example.demo;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/portfolios")
+public class PortfolioController {
+
+    @Autowired
+    private PortfolioService portfolioService;
+
+    // Fetch all portfolios with their associated IsgInfo
+    @GetMapping("/getdata")
+    public List<Portfolio> getAllPortfolios() {
+        return portfolioService.getAllPortfolios();
+    }
+    @PostMapping("/savedata")
+    public List<Portfolio> save(@RequestBody Portfolio portfolio) {
+        return portfolioService.getAllPortfolios();
+    }
+}

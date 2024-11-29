@@ -1,0 +1,141 @@
+package com.example.demo;
+
+import javax.jms.*;
+import javax.jms.Queue;
+import javax.jms.Topic;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class InMemoryMessageProvider implements ConnectionFactory, Destination, Topic, Queue {
+
+    private final Map<String, Message> topicMessages = new HashMap<>();
+    private final Map<String, Message> queueMessages = new HashMap<>();
+
+    @Override
+    public Connection createConnection() throws JMSException {
+        return new InMemoryConnection();
+    }
+
+    // Inner classes for Connection and Session
+
+    private class InMemoryConnection implements Connection {
+        @Override
+        public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
+            return new InMemorySession();
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        // Other methods of the Connection interface are omitted for brevity
+    }
+
+    private class InMemorySession implements Session {
+        @Override
+        public MessageProducer createProducer(Destination destination) throws JMSException {
+            return new InMemoryMessageProducer(destination);
+        }
+
+        @Override
+        public MessageConsumer createConsumer(Destination destination) throws JMSException {
+            return new InMemoryMessageConsumer(destination);
+        }
+
+        @Override
+        public Topic createTopic(String name) throws JMSException {
+            return InMemoryMessageProvider.this;
+        }
+
+        @Override
+        public Queue createQueue(String name) throws JMSException {
+            return InMemoryMessageProvider.this;
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        // Other methods of the Session interface are omitted for brevity
+    }
+
+    private class InMemoryMessageProducer implements MessageProducer {
+        private final Destination destination;
+
+        public InMemoryMessageProducer(Destination destination) {
+            this.destination = destination;
+        }
+
+        @Override
+        public void send(Message message) throws JMSException {
+            if (destination instanceof Topic) {
+                topicMessages.put(((InMemoryTopic) destination).getName(), message);
+            } else if (destination instanceof Queue) {
+                queueMessages.put(((InMemoryQueue) destination).getName(), message);
+            }
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        // Other methods of the MessageProducer interface are omitted for brevity
+    }
+
+    private class InMemoryMessageConsumer implements MessageConsumer {
+        private final Destination destination;
+
+        public InMemoryMessageConsumer(Destination destination) {
+            this.destination = destination;
+        }
+
+        @Override
+        public Message receive() throws JMSException {
+            if (destination instanceof Topic) {
+                return topicMessages.remove(((InMemoryTopic) destination).getName());
+            } else if (destination instanceof Queue) {
+                return queueMessages.remove(((InMemoryQueue) destination).getName());
+            }
+            return null;
+        }
+
+        @Override
+        public void close() throws JMSException {
+        }
+
+        // Other methods of the MessageConsumer interface are omitted for brevity
+    }
+
+    // In-Memory Topic and Queue classes
+
+    private class InMemoryTopic implements Topic {
+        private final String name;
+
+        public InMemoryTopic(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    private class InMemoryQueue implements Queue {
+        private final String name;
+
+        public InMemoryQueue(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+}

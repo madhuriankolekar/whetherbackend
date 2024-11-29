@@ -1,0 +1,25 @@
+package com.example.demo;
+
+
+
+import javax.jms.*;
+
+public class QueueProducer {
+    public static void main(String[] args) {
+        ConnectionFactory connectionFactory = JMSUtil.createConnectionFactory();
+        try (Connection connection = connectionFactory.createConnection();
+             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+
+            Queue queue = JMSUtil.createQueue(session);
+            MessageProducer producer = session.createProducer(queue);
+            
+            TextMessage message = session.createTextMessage("Hello Queue!");
+            producer.send(message);
+
+            System.out.println("Sent message to Queue: " + message.getText());
+
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+}

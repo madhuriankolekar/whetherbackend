@@ -1,0 +1,20 @@
+package com.example.demo.config;
+
+
+
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MessageConsumer {
+
+    @JmsListener(destination = "sample.queue")
+    public void receiveQueue(String message) {
+        System.out.println("Received Queue message: " + message);
+    }
+
+    @JmsListener(destination = "sample.topic", containerFactory = "jmsListenerContainerFactory")
+    public void receiveTopic(String message) {
+        System.out.println("Received Topic message: " + message);
+    }
+}

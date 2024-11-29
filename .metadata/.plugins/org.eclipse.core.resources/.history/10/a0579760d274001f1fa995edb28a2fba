@@ -1,0 +1,24 @@
+package com.example.demo;
+   import com.example.demo.entity.Portfolio;
+	import com.example.demo.service.PortfolioService;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.web.bind.annotation.*;
+
+	import java.util.List;
+
+	@RestController
+	@RequestMapping("/api/portfolios")
+	public class PortfolioController {
+
+	    @Autowired
+	    private PortfolioService portfolioService;
+
+	    // Fetch all portfolios with their associated IsgInfo
+	    @GetMapping
+	    public List<Portfolio> getAllPortfolios() {
+	        return portfolioService.getAllPortfolios();
+	    }
+	}
+
+
+}

@@ -1,0 +1,35 @@
+package com.example.demo;
+
+
+
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Service;
+
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
+
+//import javax.jms.Queue;
+//import javax.jms.Topic;
+
+@Service
+public class MessagingService {
+
+    private final JmsTemplate jmsTemplate;
+    private final Queue queue;
+    private final Topic topic;
+
+    public MessagingService(JmsTemplate jmsTemplate, Queue queue, Topic topic) {
+        this.jmsTemplate = jmsTemplate;
+        this.queue = queue;
+        this.topic = topic;
+    }
+
+    public void sendToQueue(String message) {
+        jmsTemplate.convertAndSend(queue, message);
+    }
+
+    public void sendToTopic(String message) {
+        jmsTemplate.convertAndSend(topic, message);
+    }
+}
+

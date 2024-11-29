@@ -1,0 +1,29 @@
+package com.example.demo;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/messages")
+public class MessageController {
+
+    @Autowired
+    private MessagingService messagingService;
+
+    @GetMapping("/sendQueue")
+    public String sendQueueMessage(@RequestParam String message) {
+        messagingService.sendMessageToQueue(message);
+        return "Message sent to queue";
+    }
+
+    @GetMapping("/sendTopic")
+    public String sendTopicMessage(@RequestParam String message) {
+        messagingService.sendMessageToTopic(message);
+        return "Message sent to topic";
+    }
+}

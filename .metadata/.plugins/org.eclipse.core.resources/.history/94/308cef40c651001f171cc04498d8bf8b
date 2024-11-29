@@ -1,0 +1,24 @@
+package com.example.demo;
+
+
+import javax.jms.*;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTopic;
+
+public class JMSUtil {
+
+    public static ActiveMQConnectionFactory createConnectionFactory() {
+        return new org.apache.activemq.ActiveMQConnectionFactory();
+    }
+
+    public static ActiveMQQueue createQueue(Session session) throws JMSException {
+        return new ActiveMQQueue("TestQueue");
+    }
+
+    public static ActiveMQTopic createTopic(Session session) throws JMSException {
+        return new ActiveMQTopic("TestTopic");
+    }
+}
+

@@ -1,0 +1,30 @@
+package com.example.demo;
+
+
+
+
+import javax.jms.*;
+
+public class QueueConsumer {
+    public static void main(String[] args) {
+        ConnectionFactory connectionFactory = (ConnectionFactory) JMSUtil.createConnectionFactory();
+        try (Connection connection = connectionFactory.createConnection();
+             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+
+            Queue queue = (Queue) JMSUtil.createQueue(session);
+            MessageConsumer consumer = session.createConsumer(queue);
+
+            connection.start();
+
+            Message message = consumer.receive();
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                System.out.println("Received message from Queue: " + textMessage.getText());
+            }
+
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+}
+

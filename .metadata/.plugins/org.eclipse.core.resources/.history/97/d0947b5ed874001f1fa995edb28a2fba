@@ -1,0 +1,14 @@
+package com.example.demo;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class PortfolioService {
+
+    @Autowired
+    private PortfolioRepository portfolioRepository;
+
+    public List<Portfolio> getAllPortfolios() {
+        return portfolioRepository.findAll();
+    }
+}
